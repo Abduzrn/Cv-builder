@@ -3,117 +3,336 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#12233A">
 <title>CV Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --desk: #dde3ea;
-    --paper: #ffffff;
-    --ink: #1b2333;
-    --muted: #5b6577;
-    --line: #c9d1db;
-    --accent: #1e6b52;
-    --accent-ink: #ffffff;
+    --ink: #12233a;
+    --bg: #f2f5f9;
+    --card: #ffffff;
+    --primary: #0f6b5a;
+    --primary-dark: #0b5346;
+    --tint: #e3f1ec;
+    --amber: #f2b441;
+    --muted: #56647a;
+    --line: #d5dde7;
+    --field: #f7f9fc;
+    --display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    background: var(--desk);
+    background: var(--bg);
     color: var(--ink);
     font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
     line-height: 1.6;
   }
-  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  .card :focus-visible, .opts :focus-visible { outline-color: var(--primary); }
 
-  header {
+  /* ---------- Stage: header + hero + how it works ---------- */
+  .stage { background: var(--ink); color: #fff; }
+  .top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 20px;
-    background: var(--ink);
-    color: #fff;
+    padding: 16px 20px;
+    max-width: 1180px;
+    margin-inline: auto;
   }
-  .brand { font-weight: 700; font-size: 1.15rem; }
+  .brand { font-family: var(--display); font-weight: 700; font-size: 1.3rem; }
   .lang-toggle {
     font: inherit;
     font-weight: 500;
     color: #fff;
     background: transparent;
-    border: 1px solid rgba(255,255,255,.5);
-    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.45);
+    border-radius: 8px;
     padding: 4px 14px;
     cursor: pointer;
   }
   .lang-toggle:hover { background: rgba(255,255,255,.12); }
 
-  .layout {
+  .hero {
     display: grid;
-    gap: 24px;
-    padding: 24px 20px 48px;
+    gap: 28px;
+    align-items: center;
+    padding: 24px 20px 36px;
     max-width: 1180px;
     margin-inline: auto;
   }
-  @media (min-width: 900px) {
-    .layout { grid-template-columns: minmax(0, 400px) minmax(0, 1fr); align-items: start; }
-    .preview-wrap { position: sticky; top: 20px; }
+  @media (min-width: 860px) { .hero { grid-template-columns: 1.15fr .85fr; padding-block: 44px 48px; } }
+  .hero h1 {
+    margin: 0 0 18px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 6.5vw, 4rem);
+    line-height: 1.2;
+  }
+  .hero h1 span { display: block; }
+  .hero h1 .l2 { color: var(--amber); }
+  .hero p { margin: 0 0 28px; max-width: 32em; color: #c6d2e2; font-size: 1.1rem; line-height: 1.8; }
+  .btn {
+    display: inline-block;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    border: 0;
+    border-radius: 12px;
+    padding: 13px 28px;
+    cursor: pointer;
+  }
+  .btn-amber { background: var(--amber); color: var(--ink); }
+  .btn-amber:hover { background: #f7c565; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+  .btn:disabled { opacity: .6; cursor: wait; }
+
+  .hero-art { width: min(100%, 420px); justify-self: center; height: auto; }
+  [dir="rtl"] .hero-art { transform: scaleX(-1); }
+  .ln {
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: write 7s ease-in-out infinite;
+    animation-delay: calc(var(--i) * .45s);
+  }
+  @keyframes write {
+    0% { transform: scaleX(0); }
+    22%, 85% { transform: scaleX(1); }
+    100% { transform: scaleX(0); }
+  }
+  .float { animation: bob 5s ease-in-out infinite alternate; }
+  .float.b { animation-duration: 6.5s; animation-delay: -2s; }
+  @keyframes bob { to { transform: translateY(-9px); } }
+  @media (prefers-reduced-motion: reduce) {
+    .ln, .float { animation: none; }
+    html { scroll-behavior: auto; }
   }
 
-  .panel { background: var(--paper); border-radius: 10px; padding: 24px; }
-  .panel h1 { margin: 0 0 4px; font-size: 1.4rem; }
-  .panel > p { margin: 0 0 20px; color: var(--muted); font-size: .95rem; }
+  .how {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0 20px 48px;
+    max-width: 1180px;
+    display: grid;
+    gap: 18px;
+  }
+  @media (min-width: 760px) { .how { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
+  .how li { display: flex; gap: 14px; align-items: flex-start; border-top: 1px solid rgba(255,255,255,.2); padding-top: 16px; }
+  .hn { font-family: var(--display); font-size: 2.8rem; font-weight: 700; line-height: 1; color: var(--amber); }
+  .how h3 { margin: 0 0 4px; font-family: var(--display); font-size: 1.15rem; font-weight: 700; }
+  .how p { margin: 0; color: #c6d2e2; font-size: .94rem; }
+
+  /* ---------- Builder ---------- */
+  .builder {
+    display: grid;
+    gap: 24px;
+    padding: 32px 20px 56px;
+    max-width: 1180px;
+    margin-inline: auto;
+    scroll-margin-top: 8px;
+  }
+  @media (min-width: 900px) {
+    .builder { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: start; }
+    .preview-col { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; }
+  }
+  .steps { display: grid; gap: 20px; }
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--primary);
+    box-shadow: 0 8px 24px rgba(18,35,58,.06);
+  }
+  .card h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 6px; font-family: var(--display); font-size: 1.3rem; font-weight: 700; }
+  .num {
+    flex: none;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: grid; place-items: center;
+    font-size: 1rem; font-weight: 700;
+  }
+  .hint { margin: 0 0 18px; color: var(--muted); font-size: .94rem; }
+
   .field { margin-bottom: 16px; }
-  .field label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+  .field label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 6px; }
+  .inp { position: relative; }
+  .inp svg {
+    position: absolute;
+    inset-inline-start: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 19px; height: 19px;
+    color: var(--muted);
+    fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    pointer-events: none;
+  }
   .field input, .field textarea {
     width: 100%;
     font: inherit;
     color: var(--ink);
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: #fff;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    background: var(--field);
+    transition: border-color .15s, box-shadow .15s, background .15s;
   }
-  .field textarea { min-height: 110px; resize: vertical; }
+  .inp input { padding-inline-start: 44px; }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(15,107,90,.16);
+  }
+  .field textarea { min-height: 84px; resize: vertical; line-height: 1.7; }
+  .field.big textarea {
+    min-height: 200px;
+    font-size: 1.03rem;
+    border: 2px dashed #a9bbd0;
+    background: #f6fbf9;
+  }
+  .field.big textarea:focus { border-style: solid; }
   .row { display: grid; gap: 16px; }
   @media (min-width: 480px) { .row { grid-template-columns: 1fr 1fr; } }
 
-  /* The CV sheet */
-  .paper {
-    background: var(--paper);
-    aspect-ratio: 1 / 1.414;
-    padding: clamp(24px, 5vw, 56px);
-    box-shadow: 0 2px 0 var(--line), 0 12px 28px rgba(27,35,51,.14);
-    overflow: hidden;
+  .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .chips > span { font-size: .86rem; color: var(--muted); }
+  .chip {
+    font: inherit;
+    font-size: .86rem;
+    font-weight: 500;
+    color: var(--primary);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 12px;
+    cursor: pointer;
   }
-  .cv-name { margin: 0; font-size: clamp(1.5rem, 3.4vw, 2.2rem); font-weight: 700; line-height: 1.2; }
-  .cv-title { margin: 4px 0 0; font-size: clamp(1rem, 2vw, 1.2rem); color: var(--accent); font-weight: 500; }
-  .cv-contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 18px;
-    margin: 14px 0 0;
-    padding: 0 0 14px;
-    border-bottom: 2px solid var(--ink);
-    font-size: .9rem;
-    color: var(--muted);
-    list-style: none;
-  }
-  .cv-section h2 { margin: 22px 0 6px; font-size: 1rem; font-weight: 700; color: var(--accent); }
-  .cv-section p { margin: 0; font-size: .95rem; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .ph { color: #a3acba; }
+  .chip::before { content: "+ "; }
+  .chip:hover { background: var(--tint); border-color: var(--primary); }
+  .status { min-height: 1.6em; margin: 12px 0 0; font-size: .94rem; color: var(--primary); font-weight: 500; }
 
-  /* Language chooser */
+  /* Design options */
+  .opts { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--primary); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; }
+  .opts h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-family: var(--display); font-size: 1.3rem; }
+  fieldset { border: 0; margin: 0 0 14px; padding: 0; min-width: 0; }
+  legend { font-weight: 600; font-size: .9rem; padding: 0; margin-bottom: 8px; }
+  .tpls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tpl {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 10px 6px 8px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    font-size: .88rem;
+  }
+  .tpl input, .sw input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .tpl svg { width: 44px; height: 58px; }
+  .tpl:has(input:checked) { border-color: var(--primary); background: var(--tint); font-weight: 600; }
+  .tpl:has(input:focus-visible), .sw:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .swatches { display: flex; gap: 12px; flex-wrap: wrap; }
+  .sw {
+    position: relative;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: inset 0 0 0 3px #fff, 0 0 0 1px var(--line);
+  }
+  .sw:has(input:checked) { box-shadow: inset 0 0 0 3px #fff, 0 0 0 3px var(--c); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .actions { margin-top: 16px; }
+
+  /* ---------- The CV sheet ---------- */
+  .paper-wrap { container-type: inline-size; }
+  .paper {
+    --cv: #0f6b5a;
+    background: #fff;
+    color: #1b2333;
+    font-size: clamp(9px, 2.5cqw, 15px);
+    line-height: 1.5;
+    aspect-ratio: 1 / 1.414;
+    box-shadow: 0 1px 0 var(--line), 0 14px 32px rgba(18,35,58,.16);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .paper h3, .paper h4, .paper p, .paper ul { margin: 0; padding: 0; }
+  .paper ul { list-style: none; }
+  .paper .ph { opacity: .5; }
+  .cv-name { font-size: 2.1em; font-weight: 700; line-height: 1.2; }
+  .cv-title { font-size: 1.15em; font-weight: 500; margin-top: .2em; }
+  .cv-contact { display: flex; flex-wrap: wrap; gap: .2em 1.2em; font-size: .92em; }
+  .cv-sec { margin-top: 1.5em; }
+  .cv-sec h4 { font-size: 1.02em; font-weight: 700; margin-bottom: .45em; color: var(--cv); }
+  .cv-sec p { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .cv-sec ul.bul li { position: relative; padding-inline-start: 1.1em; margin-bottom: .3em; }
+  .cv-sec ul.bul li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0; top: .62em;
+    width: .42em; height: .42em;
+    border-radius: 50%;
+    background: var(--cv);
+  }
+  .cv-sec ul.tags { display: flex; flex-wrap: wrap; gap: .4em; }
+  .cv-sec ul.tags li { border: 1px solid var(--cv); border-radius: 999px; padding: .1em .8em; font-size: .92em; }
+
+  /* Classic */
+  .t-classic { padding: 3.2em; font-family: "Noto Serif", "Noto Naskh Arabic", serif; line-height: 1.6; }
+  .t-classic .c-head { padding-bottom: 1em; border-bottom: 3px solid var(--cv); }
+  .t-classic .cv-name { color: var(--cv); }
+  .t-classic .cv-contact { margin-top: .9em; color: #4a5568; }
+  .t-classic .cv-sec h4 { padding-bottom: .25em; border-bottom: 1px solid #d5dde7; }
+
+  /* Modern: colored sidebar */
+  .t-modern { display: grid; grid-template-columns: 33% 1fr; }
+  .m-side { background: var(--cv); color: #fff; padding: 3em 1.7em; }
+  .m-side .cv-contact { flex-direction: column; gap: .5em; overflow-wrap: anywhere; }
+  .m-side .cv-sec:first-child, .m-side .cv-contact { margin-top: 0; }
+  .m-side .cv-sec h4 { color: #fff; padding-bottom: .3em; border-bottom: 1px solid rgba(255,255,255,.4); }
+  .m-side ul.tags { flex-direction: column; gap: .3em; }
+  .m-side ul.tags li { border: 0; border-radius: 0; padding: 0; }
+  .m-main { padding: 3em 2.4em; }
+  .m-main .cv-name { color: var(--cv); }
+  .m-main .cv-sec:first-of-type { margin-top: 1.6em; }
+
+  /* Compact: color band + two columns */
+  .k-band { background: var(--cv); color: #fff; padding: 2.6em 3.2em; display: grid; gap: 1em; }
+  .k-band .cv-contact { opacity: .95; }
+  .k-body { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2.2em; padding: 1.2em 3.2em 3em; }
+  .k-body .cv-sec h4 { padding-bottom: .25em; border-bottom: 2px solid var(--cv); }
+
+  /* ---------- Print: only the CV ---------- */
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .stage, .steps, .opts, .actions, dialog { display: none !important; }
+    .builder { display: block; padding: 0; max-width: none; }
+    .preview-col { position: static; max-height: none; overflow: visible; }
+    .paper { font-size: 11pt; box-shadow: none; aspect-ratio: auto; min-height: 297mm; }
+  }
+
+  /* ---------- Language chooser ---------- */
   dialog {
     border: 0;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 32px 28px;
     width: min(92vw, 400px);
     text-align: center;
     color: var(--ink);
   }
-  dialog::backdrop { background: rgba(27,35,51,.7); }
-  dialog h2 { margin: 0 0 4px; font-size: 1.3rem; }
+  dialog::backdrop { background: rgba(18,35,58,.75); }
+  dialog h2 { margin: 0 0 4px; font-family: var(--display); font-size: 1.4rem; }
   dialog p { margin: 0 0 22px; color: var(--muted); }
   .choices { display: grid; gap: 12px; }
   .choices button {
@@ -121,13 +340,13 @@
     font-size: 1.1rem;
     font-weight: 600;
     padding: 14px;
-    border-radius: 8px;
-    border: 2px solid var(--accent);
+    border-radius: 12px;
+    border: 2px solid var(--primary);
     background: #fff;
-    color: var(--accent);
+    color: var(--primary);
     cursor: pointer;
   }
-  .choices button.primary { background: var(--accent); color: var(--accent-ink); }
+  .choices button.primary { background: var(--primary); color: #fff; }
 </style>
 </head>
 <body>
@@ -141,156 +360,478 @@
   </div>
 </dialog>
 
-<header>
-  <span class="brand" data-i18n="brand">CV Builder</span>
-  <button class="lang-toggle" id="lang-toggle" type="button">العربية</button>
-</header>
+<div class="stage">
+  <header class="top">
+    <span class="brand" data-i18n="brand">CV Builder</span>
+    <button class="lang-toggle" id="lang-toggle" type="button">العربية</button>
+  </header>
 
-<main class="layout">
-  <section class="panel">
-    <h1 data-i18n="formTitle">Your details</h1>
-    <p data-i18n="formHint">Fill in the fields and your CV updates as you type.</p>
+  <section class="hero">
+    <div>
+      <h1><span data-i18n="heroL1">Write it any way you like.</span><span class="l2" data-i18n="heroL2">We turn it into a CV.</span></h1>
+      <p data-i18n="heroText">Type your studies, skills, awards and languages in any order. We sort each one into its place and set it in a design you choose.</p>
+      <a class="btn btn-amber" href="#builder" data-i18n="start">Start now</a>
+    </div>
 
-    <div class="field">
-      <label for="f-name" data-i18n="name">Full name</label>
-      <input id="f-name" autocomplete="name">
-    </div>
-    <div class="field">
-      <label for="f-title" data-i18n="jobTitle">Job title</label>
-      <input id="f-title" autocomplete="organization-title">
-    </div>
-    <div class="row">
-      <div class="field">
-        <label for="f-email" data-i18n="email">Email</label>
-        <input id="f-email" type="email" autocomplete="email" dir="ltr">
-      </div>
-      <div class="field">
-        <label for="f-phone" data-i18n="phone">Phone</label>
-        <input id="f-phone" type="tel" autocomplete="tel" dir="ltr">
-      </div>
-    </div>
-    <div class="field">
-      <label for="f-city" data-i18n="city">City</label>
-      <input id="f-city" autocomplete="address-level2">
-    </div>
-    <div class="field">
-      <label for="f-summary" data-i18n="summary">Profile summary</label>
-      <textarea id="f-summary"></textarea>
-    </div>
+    <svg class="hero-art" viewBox="0 0 360 300" aria-hidden="true">
+      <rect x="62" y="34" width="210" height="256" rx="12" fill="#1e3552" transform="rotate(-5 167 162)"/>
+      <rect x="80" y="18" width="210" height="262" rx="10" fill="#ffffff"/>
+      <rect class="ln" style="--i:0" x="100" y="42" width="96" height="14" rx="4" fill="#0f6b5a"/>
+      <rect class="ln" style="--i:1" x="100" y="62" width="62" height="8" rx="3" fill="#9aa8bb"/>
+      <rect x="100" y="84" width="170" height="2" fill="#d5dde7"/>
+      <rect class="ln" style="--i:2" x="100" y="100" width="44" height="8" rx="3" fill="#0f6b5a"/>
+      <rect class="ln" style="--i:3" x="100" y="116" width="170" height="7" rx="3" fill="#d5dde7"/>
+      <rect class="ln" style="--i:4" x="100" y="130" width="150" height="7" rx="3" fill="#d5dde7"/>
+      <rect class="ln" style="--i:5" x="100" y="144" width="160" height="7" rx="3" fill="#d5dde7"/>
+      <rect class="ln" style="--i:6" x="100" y="170" width="52" height="8" rx="3" fill="#0f6b5a"/>
+      <rect class="ln" style="--i:7" x="100" y="186" width="120" height="7" rx="3" fill="#d5dde7"/>
+      <rect class="ln" style="--i:8" x="100" y="200" width="140" height="7" rx="3" fill="#d5dde7"/>
+      <rect class="ln" style="--i:9" x="100" y="226" width="40" height="18" rx="9" fill="#e3f1ec"/>
+      <rect class="ln" style="--i:10" x="146" y="226" width="52" height="18" rx="9" fill="#e3f1ec"/>
+      <rect class="ln" style="--i:11" x="204" y="226" width="44" height="18" rx="9" fill="#e3f1ec"/>
+      <g class="float"><rect x="256" y="76" width="84" height="28" rx="14" fill="#f2b441"/><circle cx="274" cy="90" r="6" fill="#12233a"/></g>
+      <g class="float b"><rect x="262" y="196" width="72" height="28" rx="14" fill="#7fd1bc"/><circle cx="280" cy="210" r="6" fill="#12233a"/></g>
+    </svg>
   </section>
 
-  <section class="preview-wrap" aria-label="CV preview">
-    <article class="paper">
-      <h2 class="cv-name" id="p-name"></h2>
-      <p class="cv-title" id="p-title"></p>
-      <ul class="cv-contact" id="p-contact"></ul>
-      <div class="cv-section">
-        <h2 data-i18n="profile">Profile</h2>
-        <p id="p-summary"></p>
+  <ol class="how">
+    <li><span class="hn">1</span><div><h3 data-i18n="how1t">Write freely</h3><p data-i18n="how1d">Type your background in any order, in your own words.</p></div></li>
+    <li><span class="hn">2</span><div><h3 data-i18n="how2t">We sort it</h3><p data-i18n="how2d">Awards, studies, skills and languages each go to their own section.</p></div></li>
+    <li><span class="hn">3</span><div><h3 data-i18n="how3t">Pick a design</h3><p data-i18n="how3d">Choose a template and color, then save it as a PDF.</p></div></li>
+  </ol>
+</div>
+
+<main id="builder" class="builder">
+  <div class="steps">
+
+    <section class="card">
+      <h2><span class="num">1</span><span data-i18n="s1">About you</span></h2>
+      <p class="hint" data-i18n="s1Hint">Your name and how employers can reach you.</p>
+      <div class="field">
+        <label for="f-name" data-i18n="name">Full name</label>
+        <div class="inp">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+          <input id="f-name" autocomplete="name">
+        </div>
       </div>
-    </article>
-  </section>
+      <div class="field">
+        <label for="f-title" data-i18n="jobTitle">Job title</label>
+        <div class="inp">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>
+          <input id="f-title" autocomplete="organization-title">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="f-email" data-i18n="email">Email</label>
+          <div class="inp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            <input id="f-email" type="email" autocomplete="email" dir="ltr">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-phone" data-i18n="phone">Phone</label>
+          <div class="inp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+            <input id="f-phone" type="tel" autocomplete="tel" dir="ltr">
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label for="f-city" data-i18n="city">City</label>
+        <div class="inp">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.800 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <input id="f-city" autocomplete="address-level2">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">2</span><span data-i18n="s2">Tell us about yourself</span></h2>
+      <p class="hint" data-i18n="freeHint">Write in any order, messy is fine. We sort it into sections.</p>
+      <div class="chips">
+        <span data-i18n="addLabel">Quick add:</span>
+        <button class="chip" type="button" data-sec="education" data-i18n="education">Education</button>
+        <button class="chip" type="button" data-sec="experience" data-i18n="experience">Experience</button>
+        <button class="chip" type="button" data-sec="certificates" data-i18n="certificates">Certificates</button>
+        <button class="chip" type="button" data-sec="awards" data-i18n="awards">Awards</button>
+        <button class="chip" type="button" data-sec="skills" data-i18n="skills">Skills</button>
+        <button class="chip" type="button" data-sec="languages" data-i18n="languages">Languages</button>
+      </div>
+      <div class="field big">
+        <label class="sr" for="f-free" data-i18n="s2">Tell us about yourself</label>
+        <textarea id="f-free" data-i18n-ph="freePh"></textarea>
+      </div>
+      <button class="btn btn-primary" id="btn-smart" type="button" data-i18n="smartBtn">Create my CV</button>
+      <p class="status" id="smart-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" id="step3">
+      <h2><span class="num">3</span><span data-i18n="s3">Review and edit</span></h2>
+      <p class="hint" data-i18n="reviewHint">One item per line.</p>
+      <div class="field">
+        <label for="f-summary" data-i18n="summary">Profile summary</label>
+        <textarea id="f-summary"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-education" data-i18n="education">Education</label>
+        <textarea id="f-education"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-experience" data-i18n="experience">Experience</label>
+        <textarea id="f-experience"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-certificates" data-i18n="certificates">Certificates</label>
+        <textarea id="f-certificates"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-awards" data-i18n="awards">Awards</label>
+        <textarea id="f-awards"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-skills" data-i18n="skills">Skills</label>
+        <textarea id="f-skills"></textarea>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label for="f-languages" data-i18n="languages">Languages</label>
+        <textarea id="f-languages"></textarea>
+      </div>
+    </section>
+
+  </div>
+
+  <aside class="preview-col">
+    <section class="opts">
+      <h2><span class="num">4</span><span data-i18n="s4">Choose a design</span></h2>
+
+      <fieldset>
+        <legend data-i18n="tplLegend">Template</legend>
+        <div class="tpls">
+          <label class="tpl">
+            <input type="radio" name="tpl" value="classic" checked>
+            <svg viewBox="0 0 44 58" aria-hidden="true"><rect x=".5" y=".5" width="43" height="57" rx="3" fill="#fff" stroke="#d5dde7"/><rect x="6" y="7" width="20" height="4" rx="1" fill="#0f6b5a"/><rect x="6" y="14" width="32" height="1.5" fill="#0f6b5a"/><rect x="6" y="21" width="32" height="2" fill="#d5dde7"/><rect x="6" y="27" width="28" height="2" fill="#d5dde7"/><rect x="6" y="33" width="32" height="2" fill="#d5dde7"/><rect x="6" y="41" width="18" height="2" fill="#0f6b5a"/><rect x="6" y="46" width="30" height="2" fill="#d5dde7"/></svg>
+            <span data-i18n="tplClassic">Classic</span>
+          </label>
+          <label class="tpl">
+            <input type="radio" name="tpl" value="modern">
+            <svg viewBox="0 0 44 58" aria-hidden="true"><rect x=".5" y=".5" width="43" height="57" rx="3" fill="#fff" stroke="#d5dde7"/><path d="M3.5.5H16v57H3.5a3 3 0 0 1-3-3v-51a3 3 0 0 1 3-3z" fill="#0f6b5a"/><rect x="20" y="7" width="18" height="4" rx="1" fill="#0f6b5a"/><rect x="20" y="20" width="18" height="2" fill="#d5dde7"/><rect x="20" y="26" width="15" height="2" fill="#d5dde7"/><rect x="20" y="32" width="18" height="2" fill="#d5dde7"/><rect x="4" y="9" width="8" height="2" fill="#fff" opacity=".7"/><rect x="4" y="16" width="8" height="2" fill="#fff" opacity=".7"/></svg>
+            <span data-i18n="tplModern">Modern</span>
+          </label>
+          <label class="tpl">
+            <input type="radio" name="tpl" value="compact">
+            <svg viewBox="0 0 44 58" aria-hidden="true"><rect x=".5" y=".5" width="43" height="57" rx="3" fill="#fff" stroke="#d5dde7"/><path d="M3.5.5h37a3 3 0 0 1 3 3V15H.5V3.5a3 3 0 0 1 3-3z" fill="#0f6b5a"/><rect x="6" y="6" width="18" height="3" rx="1" fill="#fff"/><rect x="6" y="22" width="18" height="2" fill="#d5dde7"/><rect x="6" y="28" width="18" height="2" fill="#d5dde7"/><rect x="6" y="34" width="16" height="2" fill="#d5dde7"/><rect x="28" y="22" width="10" height="2" fill="#d5dde7"/><rect x="28" y="28" width="10" height="2" fill="#d5dde7"/></svg>
+            <span data-i18n="tplCompact">Compact</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset style="margin-bottom:0">
+        <legend data-i18n="clrLegend">Color</legend>
+        <div class="swatches">
+          <label class="sw" style="--c:#0f6b5a"><input type="radio" name="clr" value="green" checked><span class="sr" data-i18n="clrGreen">Green</span></label>
+          <label class="sw" style="--c:#1f3a6e"><input type="radio" name="clr" value="navy"><span class="sr" data-i18n="clrNavy">Navy</span></label>
+          <label class="sw" style="--c:#8a2a3c"><input type="radio" name="clr" value="burgundy"><span class="sr" data-i18n="clrBurgundy">Burgundy</span></label>
+          <label class="sw" style="--c:#2e3440"><input type="radio" name="clr" value="charcoal"><span class="sr" data-i18n="clrCharcoal">Charcoal</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <div class="paper-wrap">
+      <article class="paper t-classic" id="paper" aria-label="CV preview"></article>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-pdf" type="button" data-i18n="savePdf">Save as PDF</button>
+    </div>
+  </aside>
 </main>
 
 <script>
   const TEXT = {
     en: {
       brand: "CV Builder",
-      formTitle: "Your details",
-      formHint: "Fill in the fields and your CV updates as you type.",
-      name: "Full name",
-      jobTitle: "Job title",
-      email: "Email",
-      phone: "Phone",
-      city: "City",
-      summary: "Profile summary",
-      profile: "Profile",
       toggle: "العربية",
-      phName: "Your name",
-      phTitle: "Your job title",
-      phContact: "email@example.com",
+      heroL1: "Write it any way you like.",
+      heroL2: "We turn it into a CV.",
+      heroText: "Type your studies, skills, awards and languages in any order. We sort each one into its place and set it in a design you choose.",
+      start: "Start now",
+      how1t: "Write freely", how1d: "Type your background in any order, in your own words.",
+      how2t: "We sort it", how2d: "Awards, studies, skills and languages each go to their own section.",
+      how3t: "Pick a design", how3d: "Choose a template and color, then save it as a PDF.",
+      s1: "About you", s1Hint: "Your name and how employers can reach you.",
+      s2: "Tell us about yourself",
+      s3: "Review and edit",
+      s4: "Choose a design",
+      name: "Full name", jobTitle: "Job title", email: "Email", phone: "Phone", city: "City",
+      freeHint: "Write in any order, messy is fine. We sort it into sections.",
+      freePh: "Example: I finished high school with 94%. I won first place nationally 8 times. I speak English at an intermediate level. I can use Excel and Word...",
+      addLabel: "Quick add:",
+      smartBtn: "Create my CV",
+      working: "Organizing your CV...",
+      needText: "Write something about yourself first.",
+      done: "Done. Review the sections below and edit anything.",
+      doneBasic: "Sorted into sections. Review them below and fix anything.",
+      reviewHint: "One item per line.",
+      summary: "Profile summary", education: "Education", experience: "Experience", certificates: "Certificates",
+      awards: "Awards", skills: "Skills", languages: "Languages",
+      profile: "Profile",
+      tplLegend: "Template", tplClassic: "Classic", tplModern: "Modern", tplCompact: "Compact",
+      clrLegend: "Color", clrGreen: "Green", clrNavy: "Navy", clrBurgundy: "Burgundy", clrCharcoal: "Charcoal",
+      savePdf: "Save as PDF",
+      phName: "Your name", phTitle: "Your job title", phContact: "email@example.com",
       phSummary: "A short paragraph about your experience and strengths."
     },
     ar: {
       brand: "منشئ السيرة الذاتية",
-      formTitle: "بياناتك",
-      formHint: "املأ الحقول وستتحدث سيرتك الذاتية أثناء الكتابة.",
-      name: "الاسم الكامل",
-      jobTitle: "المسمى الوظيفي",
-      email: "البريد الإلكتروني",
-      phone: "رقم الهاتف",
-      city: "المدينة",
-      summary: "نبذة عنك",
-      profile: "نبذة",
       toggle: "English",
-      phName: "اسمك",
-      phTitle: "مسماك الوظيفي",
-      phContact: "email@example.com",
+      heroL1: "اكتب بأي طريقة تحب.",
+      heroL2: "ونحوّلها لك إلى سيرة ذاتية.",
+      heroText: "اكتب دراستك ومهاراتك وجوائزك ولغاتك بأي ترتيب. نوزع كل شي في مكانه ونضعه في تصميم تختاره.",
+      start: "ابدأ الآن",
+      how1t: "اكتب بحرية", how1d: "اكتب عن نفسك بأي ترتيب وبكلامك أنت.",
+      how2t: "نرتبها لك", how2d: "الجوائز والدراسة والمهارات واللغات، كل واحد يروح لقسمه.",
+      how3t: "اختر التصميم", how3d: "اختر قالباً ولوناً، ثم احفظها بصيغة PDF.",
+      s1: "عنك", s1Hint: "اسمك وكيف يتواصل معك أصحاب العمل.",
+      s2: "اكتب عن نفسك",
+      s3: "راجع وعدّل",
+      s4: "اختر التصميم",
+      name: "الاسم الكامل", jobTitle: "المسمى الوظيفي", email: "البريد الإلكتروني", phone: "رقم الهاتف", city: "المدينة",
+      freeHint: "اكتب بأي ترتيب، وحتى لو مبعثر ما فيها مشكلة. نوزعه على الأقسام.",
+      freePh: "مثال: أتممت الشهادة الثانوية بمعدل 94%. حصلت على المركز الأول على مستوى ليبيا 8 مرات. أتحدث الإنجليزية بمستوى متوسط. أجيد Excel وWord...",
+      addLabel: "إضافة سريعة:",
+      smartBtn: "أنشئ سيرتي الذاتية",
+      working: "جاري ترتيب سيرتك...",
+      needText: "اكتب شيئاً عن نفسك أولاً.",
+      done: "تم. راجع الأقسام تحت وعدّل أي شي.",
+      doneBasic: "تم توزيع كلامك على الأقسام. راجعها تحت وعدّل أي شي.",
+      reviewHint: "عنصر واحد في كل سطر.",
+      summary: "نبذة عنك", education: "التعليم", experience: "الخبرة", certificates: "الشهادات",
+      awards: "الجوائز والإنجازات", skills: "المهارات", languages: "اللغات",
+      profile: "نبذة",
+      tplLegend: "القالب", tplClassic: "كلاسيكي", tplModern: "عصري", tplCompact: "مختصر",
+      clrLegend: "اللون", clrGreen: "أخضر", clrNavy: "كحلي", clrBurgundy: "عنابي", clrCharcoal: "رمادي غامق",
+      savePdf: "حفظ كملف PDF",
+      phName: "اسمك", phTitle: "مسماك الوظيفي", phContact: "email@example.com",
       phSummary: "فقرة قصيرة عن خبرتك ونقاط قوتك."
     }
   };
 
+  const COLORS = { green: "#0f6b5a", navy: "#1f3a6e", burgundy: "#8a2a3c", charcoal: "#2e3440" };
+  const LIST_KEYS = ["education", "experience", "certificates", "awards", "skills", "languages"];
+  const IDS = ["name", "title", "email", "phone", "city", "free", "summary"].concat(LIST_KEYS);
+
   const $ = (id) => document.getElementById(id);
-  const dialog = $("lang-dialog");
+  const val = (id) => $("f-" + id).value.trim();
+  const lines = (id) => $("f-" + id).value.split("\n").map((s) => s.trim()).filter(Boolean);
+  const radio = (name) => document.querySelector('input[name="' + name + '"]:checked').value;
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
   let lang = "en";
 
+  /* ----- Save and restore what the user typed (on this device only) ----- */
+  function save() {
+    try {
+      const d = {};
+      IDS.forEach((i) => (d[i] = $("f-" + i).value));
+      d.tpl = radio("tpl");
+      d.clr = radio("clr");
+      localStorage.setItem("cv-data", JSON.stringify(d));
+    } catch (e) {}
+  }
+  function restore() {
+    try {
+      const d = JSON.parse(localStorage.getItem("cv-data") || "null");
+      if (!d) return;
+      IDS.forEach((i) => { if (typeof d[i] === "string") $("f-" + i).value = d[i]; });
+      ["tpl", "clr"].forEach((n) => {
+        const r = document.querySelector('input[name="' + n + '"][value="' + d[n] + '"]');
+        if (r) r.checked = true;
+      });
+    } catch (e) {}
+  }
+
+  /* ----- CV rendering ----- */
+  const sec = (title, inner) => (inner ? '<section class="cv-sec"><h4>' + esc(title) + "</h4>" + inner + "</section>" : "");
+  const ul = (items, cls) => (items.length ? '<ul class="' + cls + '">' + items.map((i) => "<li>" + esc(i) + "</li>").join("") + "</ul>" : "");
+
+  const TEMPLATES = {
+    classic: (p) => '<div class="c-head">' + p.head + p.contact + "</div>" + p.summary + p.experience + p.education + p.certificates + p.awards + p.skills + p.languages,
+    modern: (p) => '<div class="m-side">' + p.contact + p.skills + p.languages + '</div><div class="m-main">' + p.head + p.summary + p.experience + p.education + p.certificates + p.awards + "</div>",
+    compact: (p) => '<div class="k-band">' + p.head + p.contact + '</div><div class="k-body"><div>' + p.summary + p.experience + p.education + "</div><div>" + p.certificates + p.awards + p.skills + p.languages + "</div></div>"
+  };
+
+  function render() {
+    const t = TEXT[lang];
+    const tpl = radio("tpl");
+    const paper = $("paper");
+    paper.className = "paper t-" + tpl;
+    paper.style.setProperty("--cv", COLORS[radio("clr")]);
+
+    const name = val("name"), title = val("title"), summary = val("summary");
+    const contactItems = [val("email"), val("phone"), val("city")].filter(Boolean);
+
+    const parts = {
+      head:
+        '<h3 class="cv-name' + (name ? "" : " ph") + '">' + esc(name || t.phName) + "</h3>" +
+        '<p class="cv-title' + (title ? "" : " ph") + '">' + esc(title || t.phTitle) + "</p>",
+      contact:
+        '<ul class="cv-contact' + (contactItems.length ? "" : " ph") + '">' +
+        (contactItems.length ? contactItems : [t.phContact]).map((i) => "<li><bdi>" + esc(i) + "</bdi></li>").join("") +
+        "</ul>",
+      summary: sec(t.profile, '<p class="' + (summary ? "" : "ph") + '">' + esc(summary || t.phSummary) + "</p>"),
+      education: sec(t.education, ul(lines("education"), "bul")),
+      experience: sec(t.experience, ul(lines("experience"), "bul")),
+      certificates: sec(t.certificates, ul(lines("certificates"), "bul")),
+      awards: sec(t.awards, ul(lines("awards"), "bul")),
+      skills: sec(t.skills, ul(lines("skills"), "tags")),
+      languages: sec(t.languages, ul(lines("languages"), "tags"))
+    };
+    paper.innerHTML = TEMPLATES[tpl](parts);
+    save();
+  }
+
+  /* ----- Language ----- */
   function setLang(next) {
     lang = next;
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-    document.querySelectorAll("[data-i18n]").forEach((el) => {
-      el.textContent = TEXT[lang][el.dataset.i18n];
-    });
+    document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = TEXT[lang][el.dataset.i18n]; });
+    document.querySelectorAll("[data-i18n-ph]").forEach((el) => { el.placeholder = TEXT[lang][el.dataset.i18nPh]; });
     $("lang-toggle").textContent = TEXT[lang].toggle;
     document.title = TEXT[lang].brand;
     try { localStorage.setItem("cv-lang", lang); } catch (e) {}
     render();
   }
 
-  function fill(el, value, placeholder) {
-    el.textContent = value || placeholder;
-    el.classList.toggle("ph", !value);
+  /* ----- Sorting scattered text into sections (works offline, no AI needed) ----- */
+  const RULES = [
+    ["awards", /جائز|جوائز|إنجاز|انجاز|الترتيب الأول|المركز|المرتبة|فزت|فائز|تكريم|متفوق|حافظ|award|achievement|prize|won |winner|first place|ranked|honou?r/i],
+    ["education", /التعليم|الدراسة|الثانوية|جامع|كلية|بكالوريوس|ماجستير|دكتوراه|دبلوم|معدل|تخرج|أدرس|طالب|education|high school|universit|college|degree|bachelor|master|gpa|graduat/i],
+    ["certificates", /إجازة|اجازة|شهادة|شهادات|دورة|دورات|تدريب|certificat|course|training|diploma/i],
+    ["experience", /خبرة|عملت|أعمل|اعمل|وظيفة|شركة|موظف|تطوع|متطوع|experience|worked|working at|\bjob\b|intern|volunteer/i],
+    ["languages", /لغة|لغات|الإنجليزية|الانجليزية|انجليزي|إنجليزي|العربية|الفرنسية|التركية|الألمانية|language|english|arabic|french|turkish|german|fluent/i],
+    ["skills", /أجيد|اجيد|مهارة|مهارات|أتقن|اتقن|برنامج|برمجة|excel|word|powerpoint|photoshop|skill|proficient/i]
+  ];
+
+  function classify(text) {
+    for (const rule of RULES) if (rule[1].test(text)) return rule[0];
+    return null;
   }
 
-  function render() {
-    const t = TEXT[lang];
-    fill($("p-name"), $("f-name").value.trim(), t.phName);
-    fill($("p-title"), $("f-title").value.trim(), t.phTitle);
-    fill($("p-summary"), $("f-summary").value.trim(), t.phSummary);
+  function localSort(text) {
+    const out = { name: "", title: "", email: "", phone: "", city: "", summary: "" };
+    LIST_KEYS.forEach((k) => (out[k] = []));
+    let s = text;
 
-    const items = [$("f-email").value, $("f-phone").value, $("f-city").value]
-      .map((v) => v.trim())
+    const take = (re, fn) => {
+      const m = s.match(re);
+      if (m) { fn(m); s = s.replace(m[0], " "); }
+    };
+    take(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/, (m) => (out.email = m[0]));
+    take(/\+?\d[\d-]{7,}\d/, (m) => (out.phone = m[0]));
+    take(/(?:اسمي|my name is)\s+([^\n.،,؛;!؟?]{2,40})/i, (m) => (out.name = m[1].trim()));
+    take(/(?:أسكن في|اسكن في|أعيش في|اعيش في|من مدينة|i live in|based in)\s+([^\n.،,؛;!؟?]{2,25})/i, (m) => (out.city = m[1].trim()));
+    if (out.email || out.phone) {
+      // remove the words that introduced the contact details, e.g. "my phone is"
+      s = s
+        .replace(/و?(?:رقم هاتفي|رقم جوالي|رقمي|هاتفي|جوالي|[إا]يميلي|بريدي الإلكتروني|بريدي)/g, " ")
+        .replace(/\b(?:and )?my (?:phone(?: number)?|number|email(?: address)?)(?: is)?/gi, " ");
+    }
+
+    const segments = s
+      .replace(/([.!?؟؛;])[ \t]+/g, "$1\n")
+      .split(/\n+/)
+      .map((x) => x.replace(/^[\s\-•*–]+/, "").replace(/[.!?؟؛;\s]+$/, ""))
       .filter(Boolean);
-    const list = $("p-contact");
-    list.innerHTML = "";
-    (items.length ? items : [t.phContact]).forEach((text) => {
-      const li = document.createElement("li");
-      li.textContent = text;
-      if (!items.length) li.className = "ph";
-      list.appendChild(li);
+
+    const summary = [];
+    segments.forEach((seg) => {
+      let key = null;
+      const lab = seg.match(/^([^:：]{2,25})[:：]\s*(.*)$/);
+      if (lab && classify(lab[1])) { key = classify(lab[1]); seg = lab[2].trim(); }
+      if (!seg) return;
+      if (!key) key = classify(seg);
+      if (!key) { summary.push(seg); return; }
+      if ((key === "skills" || key === "languages") && /[،,]/.test(seg)) {
+        seg.split(/[،,]/).map((x) => x.trim()).filter(Boolean).forEach((x) => out[key].push(x));
+      } else {
+        out[key].push(seg);
+      }
+    });
+    out.summary = summary.length ? summary.join(". ") + "." : "";
+    return out;
+  }
+
+  /* ----- Put a result into the fields without erasing what the user already wrote ----- */
+  function applyResult(d) {
+    ["name", "title", "email", "phone", "city", "summary"].forEach((k) => {
+      if (typeof d[k] === "string" && d[k].trim() && !val(k)) $("f-" + k).value = d[k].trim();
+    });
+    LIST_KEYS.forEach((k) => {
+      if (!Array.isArray(d[k]) || !d[k].length) return;
+      const current = lines(k);
+      const extra = d[k].map((x) => String(x).trim()).filter((x) => x && !current.includes(x));
+      if (extra.length) $("f-" + k).value = current.concat(extra).join("\n");
     });
   }
 
-  ["f-name", "f-title", "f-email", "f-phone", "f-city", "f-summary"].forEach((id) =>
-    $(id).addEventListener("input", render)
-  );
+  async function smart() {
+    const status = $("smart-status");
+    const t = TEXT[lang];
+    const text = val("free");
+    if (!text) { status.textContent = t.needText; return; }
+    const btn = $("btn-smart");
+    btn.disabled = true;
+    status.textContent = t.working;
+    let message = t.done;
+    try {
+      // AI mode (added later). If it isn't available, the built-in sorter is used.
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text, lang: lang })
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      applyResult(await res.json());
+    } catch (e) {
+      applyResult(localSort(text));
+      message = t.doneBasic;
+    }
+    render();
+    status.textContent = message;
+    btn.disabled = false;
+    $("step3").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
+  /* ----- Wiring ----- */
+  IDS.forEach((id) => $("f-" + id).addEventListener("input", render));
+  document.querySelectorAll('input[name="tpl"], input[name="clr"]').forEach((r) => r.addEventListener("change", render));
+  $("btn-smart").addEventListener("click", smart);
+  $("btn-pdf").addEventListener("click", () => window.print());
   $("lang-toggle").addEventListener("click", () => setLang(lang === "en" ? "ar" : "en"));
 
-  dialog.querySelectorAll("[data-pick]").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      setLang(btn.dataset.pick);
-      dialog.close();
+  document.querySelectorAll(".chip").forEach((chip) =>
+    chip.addEventListener("click", () => {
+      const ta = $("f-free");
+      ta.value += (ta.value && !ta.value.endsWith("\n") ? "\n" : "") + TEXT[lang][chip.dataset.sec] + ": ";
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+      save();
     })
   );
-  // Closing with Esc keeps the English default
+
+  const dialog = $("lang-dialog");
+  dialog.querySelectorAll("[data-pick]").forEach((btn) =>
+    btn.addEventListener("click", () => { setLang(btn.dataset.pick); dialog.close(); })
+  );
   dialog.addEventListener("cancel", () => setLang("en"));
 
-  // Start in English; ask for a language on the first visit
-  let saved = null;
-  try { saved = localStorage.getItem("cv-lang"); } catch (e) {}
-  setLang(saved === "ar" ? "ar" : "en");
-  if (!saved) dialog.showModal();
+  restore();
+  let savedLang = null;
+  try { savedLang = localStorage.getItem("cv-lang"); } catch (e) {}
+  setLang(savedLang === "ar" ? "ar" : "en");
+  if (!savedLang) dialog.showModal();
 </script>
 </body>
 </html>
