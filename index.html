@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --desk: #dde3ea;
+    --paper: #ffffff;
+    --ink: #1b2333;
+    --muted: #5b6577;
+    --line: #c9d1db;
+    --accent: #1e6b52;
+    --accent-ink: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .brand { font-weight: 700; font-size: 1.15rem; }
+  .lang-toggle {
+    font: inherit;
+    font-weight: 500;
+    color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 6px;
+    padding: 4px 14px;
+    cursor: pointer;
+  }
+  .lang-toggle:hover { background: rgba(255,255,255,.12); }
+
+  .layout {
+    display: grid;
+    gap: 24px;
+    padding: 24px 20px 48px;
+    max-width: 1180px;
+    margin-inline: auto;
+  }
+  @media (min-width: 900px) {
+    .layout { grid-template-columns: minmax(0, 400px) minmax(0, 1fr); align-items: start; }
+    .preview-wrap { position: sticky; top: 20px; }
+  }
+
+  .panel { background: var(--paper); border-radius: 10px; padding: 24px; }
+  .panel h1 { margin: 0 0 4px; font-size: 1.4rem; }
+  .panel > p { margin: 0 0 20px; color: var(--muted); font-size: .95rem; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+  }
+  .field textarea { min-height: 110px; resize: vertical; }
+  .row { display: grid; gap: 16px; }
+  @media (min-width: 480px) { .row { grid-template-columns: 1fr 1fr; } }
+
+  /* The CV sheet */
+  .paper {
+    background: var(--paper);
+    aspect-ratio: 1 / 1.414;
+    padding: clamp(24px, 5vw, 56px);
+    box-shadow: 0 2px 0 var(--line), 0 12px 28px rgba(27,35,51,.14);
+    overflow: hidden;
+  }
+  .cv-name { margin: 0; font-size: clamp(1.5rem, 3.4vw, 2.2rem); font-weight: 700; line-height: 1.2; }
+  .cv-title { margin: 4px 0 0; font-size: clamp(1rem, 2vw, 1.2rem); color: var(--accent); font-weight: 500; }
+  .cv-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: 14px 0 0;
+    padding: 0 0 14px;
+    border-bottom: 2px solid var(--ink);
+    font-size: .9rem;
+    color: var(--muted);
+    list-style: none;
+  }
+  .cv-section h2 { margin: 22px 0 6px; font-size: 1rem; font-weight: 700; color: var(--accent); }
+  .cv-section p { margin: 0; font-size: .95rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .ph { color: #a3acba; }
+
+  /* Language chooser */
+  dialog {
+    border: 0;
+    border-radius: 12px;
+    padding: 32px 28px;
+    width: min(92vw, 400px);
+    text-align: center;
+    color: var(--ink);
+  }
+  dialog::backdrop { background: rgba(27,35,51,.7); }
+  dialog h2 { margin: 0 0 4px; font-size: 1.3rem; }
+  dialog p { margin: 0 0 22px; color: var(--muted); }
+  .choices { display: grid; gap: 12px; }
+  .choices button {
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 14px;
+    border-radius: 8px;
+    border: 2px solid var(--accent);
+    background: #fff;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .choices button.primary { background: var(--accent); color: var(--accent-ink); }
+</style>
+</head>
+<body>
+
+<dialog id="lang-dialog" aria-labelledby="lang-title">
+  <h2 id="lang-title">Choose your language</h2>
+  <p dir="rtl" lang="ar">اختر لغتك</p>
+  <div class="choices">
+    <button class="primary" data-pick="en" autofocus>English</button>
+    <button data-pick="ar">العربية</button>
+  </div>
+</dialog>
+
+<header>
+  <span class="brand" data-i18n="brand">CV Builder</span>
+  <button class="lang-toggle" id="lang-toggle" type="button">العربية</button>
+</header>
+
+<main class="layout">
+  <section class="panel">
+    <h1 data-i18n="formTitle">Your details</h1>
+    <p data-i18n="formHint">Fill in the fields and your CV updates as you type.</p>
+
+    <div class="field">
+      <label for="f-name" data-i18n="name">Full name</label>
+      <input id="f-name" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="f-title" data-i18n="jobTitle">Job title</label>
+      <input id="f-title" autocomplete="organization-title">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="f-email" data-i18n="email">Email</label>
+        <input id="f-email" type="email" autocomplete="email" dir="ltr">
+      </div>
+      <div class="field">
+        <label for="f-phone" data-i18n="phone">Phone</label>
+        <input id="f-phone" type="tel" autocomplete="tel" dir="ltr">
+      </div>
+    </div>
+    <div class="field">
+      <label for="f-city" data-i18n="city">City</label>
+      <input id="f-city" autocomplete="address-level2">
+    </div>
+    <div class="field">
+      <label for="f-summary" data-i18n="summary">Profile summary</label>
+      <textarea id="f-summary"></textarea>
+    </div>
+  </section>
+
+  <section class="preview-wrap" aria-label="CV preview">
+    <article class="paper">
+      <h2 class="cv-name" id="p-name"></h2>
+      <p class="cv-title" id="p-title"></p>
+      <ul class="cv-contact" id="p-contact"></ul>
+      <div class="cv-section">
+        <h2 data-i18n="profile">Profile</h2>
+        <p id="p-summary"></p>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script>
+  const TEXT = {
+    en: {
+      brand: "CV Builder",
+      formTitle: "Your details",
+      formHint: "Fill in the fields and your CV updates as you type.",
+      name: "Full name",
+      jobTitle: "Job title",
+      email: "Email",
+      phone: "Phone",
+      city: "City",
+      summary: "Profile summary",
+      profile: "Profile",
+      toggle: "العربية",
+      phName: "Your name",
+      phTitle: "Your job title",
+      phContact: "email@example.com",
+      phSummary: "A short paragraph about your experience and strengths."
+    },
+    ar: {
+      brand: "منشئ السيرة الذاتية",
+      formTitle: "بياناتك",
+      formHint: "املأ الحقول وستتحدث سيرتك الذاتية أثناء الكتابة.",
+      name: "الاسم الكامل",
+      jobTitle: "المسمى الوظيفي",
+      email: "البريد الإلكتروني",
+      phone: "رقم الهاتف",
+      city: "المدينة",
+      summary: "نبذة عنك",
+      profile: "نبذة",
+      toggle: "English",
+      phName: "اسمك",
+      phTitle: "مسماك الوظيفي",
+      phContact: "email@example.com",
+      phSummary: "فقرة قصيرة عن خبرتك ونقاط قوتك."
+    }
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const dialog = $("lang-dialog");
+  let lang = "en";
+
+  function setLang(next) {
+    lang = next;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      el.textContent = TEXT[lang][el.dataset.i18n];
+    });
+    $("lang-toggle").textContent = TEXT[lang].toggle;
+    document.title = TEXT[lang].brand;
+    try { localStorage.setItem("cv-lang", lang); } catch (e) {}
+    render();
+  }
+
+  function fill(el, value, placeholder) {
+    el.textContent = value || placeholder;
+    el.classList.toggle("ph", !value);
+  }
+
+  function render() {
+    const t = TEXT[lang];
+    fill($("p-name"), $("f-name").value.trim(), t.phName);
+    fill($("p-title"), $("f-title").value.trim(), t.phTitle);
+    fill($("p-summary"), $("f-summary").value.trim(), t.phSummary);
+
+    const items = [$("f-email").value, $("f-phone").value, $("f-city").value]
+      .map((v) => v.trim())
+      .filter(Boolean);
+    const list = $("p-contact");
+    list.innerHTML = "";
+    (items.length ? items : [t.phContact]).forEach((text) => {
+      const li = document.createElement("li");
+      li.textContent = text;
+      if (!items.length) li.className = "ph";
+      list.appendChild(li);
+    });
+  }
+
+  ["f-name", "f-title", "f-email", "f-phone", "f-city", "f-summary"].forEach((id) =>
+    $(id).addEventListener("input", render)
+  );
+
+  $("lang-toggle").addEventListener("click", () => setLang(lang === "en" ? "ar" : "en"));
+
+  dialog.querySelectorAll("[data-pick]").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      setLang(btn.dataset.pick);
+      dialog.close();
+    })
+  );
+  // Closing with Esc keeps the English default
+  dialog.addEventListener("cancel", () => setLang("en"));
+
+  // Start in English; ask for a language on the first visit
+  let saved = null;
+  try { saved = localStorage.getItem("cv-lang"); } catch (e) {}
+  setLang(saved === "ar" ? "ar" : "en");
+  if (!saved) dialog.showModal();
+</script>
+</body>
+</html>
